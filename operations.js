@@ -26,40 +26,58 @@ exports.upload = function(link) {
     var output = "";
 
     depl_app.stdout.on("data", function(data) {
-        console.log(data.toString());
+        console.log(data.toString().trim());
         output += data.toString();
     });
     depl_app.stderr.on("data", function(data) {
-        console.error(data.toString());
+        console.error(data.toString().trim());
         output += data.toString();
     });
     depl_app.on("exit", function(code){
 
         if (code == 0) {
-            // TODO determine this ID from the deployment script
+            // TODO improve this appId reading (probably get it through other means)
             // (add all output to a -v option and only print ID at the end)
-            var appId = "faeb1870000000000000000000000000";
+            var splits = output.trim().split("\n");
+            var lastLine = splits[splits.length - 1];
+            var tokens = lastLine.trim().split(" ");
+            var appId = tokens[tokens.length - 1];
 
             apps.getApplication(appId, function(err, app) {
 
                 if (err) {
-                    send.internalservererror(link, "Application deployment failed somehow. :(");
+                    send.internalservererror(link, "The application was not found in the databse. Application deployment failed somehow. :(");
                     return;
                 }
 
-                // TODO enhance the app api to return the domains or at least the first one
-                var domain = app.domain || "crm.mono.ch:8000";
+                apps.getApplicationDomains(appId, function(err, domains) {
 
-                var result = {
-                    name: app.name,
-                    size: 0,
-                    type: "text/html",
-                    delete_type: "DELETE",
-                    delete_url: "http://dev.mono.ch:8000/@/dev_deployer/remove/00000000000000000000000000000002",
-                    url: "http://" + domain + "/"
-                };
+                    if (err) {
+                        send.internalservererror(link, err);
+                        return;
+                    }
 
-                send.ok(link.res, [result]);
+                    var domain = null;
+
+                    for (var i in domains) {
+                        if (domains[i].indexOf("mono.ch") !== -1) {
+                            continue;
+                        }
+                        domain = domains[i];
+                        break;
+                    }
+
+                    var result = {
+                        name: app.name,
+                        size: 0,
+                        type: "text/html",
+                        delete_type: "DELETE",
+                        delete_url: "http://dev.mono.ch:8000/@/dev_deployer/remove/00000000000000000000000000000002",
+                        url: domain ? "http://" + domain + "/" : "#"
+                    };
+
+                    send.ok(link.res, [result]);
+                });
             });
         }
         else {
