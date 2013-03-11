@@ -20,6 +20,13 @@ define([
             btn.addClass("disabled");
             textBox.attr("disabled", "");
             
+            
+            // Show alert message
+            var message = "Starting the deploy operation. Downloading zip file from <a target='_blank' href='" + 
+                          repositoryPath +  "'>this</a> repository.";
+            
+            showStartOperationMessage(message);
+            
             // Call deploy from Github operation
             self.link("deployFromGithub", { data: repositoryPath }, function(err) {
                 btn.removeClass("disabled");
@@ -28,9 +35,9 @@ define([
                 $("#repository-path").val("");
                 
                 if (err) {
-                    alert("Error: " + err);
+                    showError(err);
                 } else {
-                    alert("Finished...");
+                    showSuccessMessage("Successfully deployed app from Github.");
                 }
             });
         });
@@ -63,3 +70,30 @@ define([
     return init;
 });
 
+// Alerts functions
+function showError(err) {
+    var template = $("#errorAlert").clone().attr("id", "");
+    template.find(".message").html(err);
+
+    template.fadeIn();
+        
+    $("#alerts").append(template);
+}
+    
+function showStartOperationMessage(message) {
+    var template = $("#warningAlert").clone().attr("id", "");
+
+    template.find(".message").html(message);
+    template.fadeIn();
+       
+    $("#alerts").append(template);
+}
+    
+function showSuccessMessage(message) {
+    var template = $("#successAlert").clone().attr("id", "");
+
+    template.find(".message").html(message);
+    template.fadeIn();
+    
+    $("#alerts").append(template);
+}
