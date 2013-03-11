@@ -86,3 +86,16 @@ exports.upload = function(link) {
     });
 };
 
+
+exports.deployFromGithub = function(link) {
+    var repositoryPath = link.data;
+    
+    apps.installFromGithub(repositoryPath, function(err, result) {
+        if (err) {
+            send.internalservererror(link, err);
+        }
+        else {
+            send.ok(link.res, result);
+        }
+    });
+}

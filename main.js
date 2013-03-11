@@ -8,6 +8,24 @@ define([
     function init(config) {
         self = this;
 
+        // Deploy from Github
+        $("#deploy-from-github .btn-start").on("click", function() {
+            var repositoryPath = $("#repository-path").val().trim();
+            
+            var btn = $("#deploy-from-github");
+            btn.addClass("disabled");
+            
+            self.link("deployFromGithub", { data: repositoryPath }, function(err) {
+                btn.removeClass("disabled");
+                
+                if (err) {
+                    alert("Error: " + err);
+                } else {
+                    alert("Finished...");
+                }
+            });
+        });
+
         // Initialize the jQuery File Upload widget:
         $('#fileupload').fileupload();
 
