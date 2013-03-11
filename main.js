@@ -10,13 +10,22 @@ define([
 
         // Deploy from Github
         $("#deploy-from-github .btn-start").on("click", function() {
+            
             var repositoryPath = $("#repository-path").val().trim();
             
-            var btn = $("#deploy-from-github");
-            btn.addClass("disabled");
+            var textBox = $("#repository-path");
+            var btn = $(this);
             
+            // Disable button and the textbox
+            btn.addClass("disabled");
+            textBox.attr("disabled", "");
+            
+            // Call deploy from Github operation
             self.link("deployFromGithub", { data: repositoryPath }, function(err) {
                 btn.removeClass("disabled");
+                textBox.removeAttr("disabled");
+                
+                $("#repository-path").val("");
                 
                 if (err) {
                     alert("Error: " + err);
