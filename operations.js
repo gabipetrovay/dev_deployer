@@ -1,27 +1,23 @@
 var spawn = require("child_process").spawn;
 
-var send  = require(CONFIG.root + "/core/send.js").send;
-var apps = require(CONFIG.root + "/api/apps");
-
-
 exports.upload = function(link) {
 
     if (link.req.method === "GET") {
-        send.ok(link.res, { status: "OK" });
+        link.send(200, { status: "OK" });
         return;
     }
 
     if (!link.files || !link.files["files[]"] || !link.files["files[]"].path) {
-        send.badrequest(link, "Missing file");
+        link.send(400, "Missing file");
         return;
     }
 
     var file = link.files["files[]"];
-    var zipPath = CONFIG.APPLICATION_ROOT + link.session.appid + "/" + file.path;
+    var zipPath = M.config.APPLICATION_ROOT + link.session.appid + "/" + file.path;
 
     var env = process.env;
-    env.MONO_ROOT = CONFIG.root;
-    var depl_app = spawn(CONFIG.root + "/admin/scripts/installation/deploy_app.sh", [zipPath], { env: env });
+    env.MONO_ROOT = M.config.root;
+    var depl_app = spawn(M.config.root + "/admin/scripts/installation/deploy_app.sh", [zipPath], { env: env });
 
     var output = "";
 
@@ -33,6 +29,9 @@ exports.upload = function(link) {
         console.error(data.toString().trim());
         output += data.toString();
     });
+    
+    apps.install();
+    
     depl_app.on("exit", function(code){
 
         if (code == 0) {
@@ -46,14 +45,14 @@ exports.upload = function(link) {
             apps.getApplication(appId, function(err, app) {
 
                 if (err) {
-                    send.internalservererror(link, "The application was not found in the databse. Application deployment failed somehow. :(");
+                    link.send(500, "The application was not found in the databse. Application deployment failed somehow. :(");
                     return;
                 }
 
                 apps.getApplicationDomains(appId, function(err, domains) {
 
                     if (err) {
-                        send.internalservererror(link, err);
+                        link.send(500, err);
                         return;
                     }
 
@@ -76,26 +75,12 @@ exports.upload = function(link) {
                         url: domain ? "http://" + domain + "/" : "#"
                     };
 
-                    send.ok(link.res, [result]);
+                    link.send(200, [result]);
                 });
             });
         }
         else {
-            send.internalservererror(link, ":{ :( :[");
+            link.send(500, ":{ :( :[");
         }
     });
 };
-
-
-exports.deployFromGithub = function(link) {
-    var repositoryPath = link.data;
-    
-    apps.installFromGithub(repositoryPath, function(err, result) {
-        if (err) {
-            send.internalservererror(link, err);
-        }
-        else {
-            send.ok(link.res, result);
-        }
-    });
-}
