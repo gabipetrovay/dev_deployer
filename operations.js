@@ -1,5 +1,33 @@
 var spawn = require("child_process").spawn;
 
+exports.deployFromGithub = function(link) {
+
+    if (!link.data || typeof link.data !== "string" || !link.data.trim()) {
+        send.badrequest(link, "Missing repository URL");
+        return;
+    }
+
+    var repoUrl = link.data.trim();
+
+    M.app.fetch(repoUrl, function(err, descriptor) {
+
+        if (err) {
+            send.internalservererror(link, err);
+            return;
+        }
+
+        M.app.install(descriptor, function(err) {
+
+            if (err) {
+                send.internalservererror(link, err);
+                return;
+            }
+
+            send.ok(link.res);
+        });
+    });
+};
+
 exports.upload = function(link) {
 
     if (link.req.method === "GET") {
@@ -84,3 +112,4 @@ exports.upload = function(link) {
         }
     });
 };
+
