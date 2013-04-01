@@ -3,7 +3,7 @@ var spawn = require("child_process").spawn;
 exports.deployFromGithub = function(link) {
 
     if (!link.data || typeof link.data !== "string" || !link.data.trim()) {
-        send.badrequest(link, "Missing repository URL");
+        link.send(400, "Missing repository URL");
         return;
     }
 
@@ -12,18 +12,18 @@ exports.deployFromGithub = function(link) {
     M.app.fetch(repoUrl, function(err, descriptor) {
 
         if (err) {
-            send.internalservererror(link, err);
+            link.send(500, err);
             return;
         }
 
         M.app.install(descriptor, function(err) {
 
             if (err) {
-                send.internalservererror(link, err);
+                link.send(500, err);
                 return;
             }
 
-            send.ok(link.res);
+            link.send(200);
         });
     });
 };
