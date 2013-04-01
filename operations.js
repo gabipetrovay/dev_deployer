@@ -30,7 +30,7 @@ exports.upload = function(link) {
         output += data.toString();
     });
     
-    apps.install();
+    M.app.install();
     
     depl_app.on("exit", function(code){
 
@@ -42,14 +42,14 @@ exports.upload = function(link) {
             var tokens = lastLine.trim().split(" ");
             var appId = tokens[tokens.length - 1];
 
-            apps.getApplication(appId, function(err, app) {
+            M.app.getApplication(appId, function(err, app) {
 
                 if (err) {
                     link.send(500, "The application was not found in the databse. Application deployment failed somehow. :(");
                     return;
                 }
 
-                apps.getApplicationDomains(appId, function(err, domains) {
+                M.app.getDomains(appId, function(err, domains) {
 
                     if (err) {
                         link.send(500, err);
