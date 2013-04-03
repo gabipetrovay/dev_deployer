@@ -12,7 +12,7 @@ exports.deployFromGithub = function(link) {
     M.app.fetch(repoUrl, function(err, descriptor) {
 
         if (err) {
-            link.send(500, err);
+            link.send(500, err.message);
             return;
         }
 

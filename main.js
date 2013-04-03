@@ -22,8 +22,7 @@ define([
             
             
             // Show alert message
-            var message = "Starting the deploy operation. Downloading zip file from <a target='_blank' href='" + 
-                          repositoryPath +  "'>this</a> repository.";
+            var message = "Started deployment from " + repositoryPath + " ...";
             
             showStartOperationMessage(message);
             
