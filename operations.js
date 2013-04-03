@@ -19,7 +19,7 @@ exports.deployFromGithub = function(link) {
         M.app.install(descriptor, function(err) {
 
             if (err) {
-                link.send(500, err);
+                link.send(500, err.message);
                 return;
             }
 
