@@ -17,9 +17,8 @@ define([
             var btn = $(this);
             
             // Disable button and the textbox
-            btn.addClass("disabled");
+            btn.attr("disabled", "");
             textBox.attr("disabled", "");
-            
             
             // Show alert message
             var message = "Started deployment from " + repositoryPath + " ...";
@@ -28,7 +27,7 @@ define([
             
             // Call deploy from Git operation
             self.link("deployFromGit", { data: repositoryPath }, function(err) {
-                btn.removeClass("disabled");
+                btn.removeAttr("disabled");
                 textBox.removeAttr("disabled");
                 
                 $("#repository-path").val("");
