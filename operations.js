@@ -1,6 +1,6 @@
 var spawn = require("child_process").spawn;
 
-exports.deployFromGithub = function(link) {
+exports.deployFromGit = function(link) {
 
     if (!link.data || typeof link.data !== "string" || !link.data.trim()) {
         link.send(400, "Missing repository URL");
