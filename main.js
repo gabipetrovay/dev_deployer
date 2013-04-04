@@ -8,8 +8,8 @@ define([
     function init(config) {
         self = this;
 
-        // Deploy from Github
-        $("#deploy-from-github .btn-start").on("click", function() {
+        // Deploy from Git
+        $("#deploy-from-git .btn-start").on("click", function() {
             
             var repositoryPath = $("#repository-path").val().trim();
             
@@ -26,8 +26,8 @@ define([
             
             showStartOperationMessage(message);
             
-            // Call deploy from Github operation
-            self.link("deployFromGithub", { data: repositoryPath }, function(err) {
+            // Call deploy from Git operation
+            self.link("deployFromGit", { data: repositoryPath }, function(err) {
                 btn.removeClass("disabled");
                 textBox.removeAttr("disabled");
                 
@@ -36,7 +36,7 @@ define([
                 if (err) {
                     showError(err);
                 } else {
-                    showSuccessMessage("Successfully deployed app from Github.");
+                    showSuccessMessage("Successfully deployed app from Git.");
                 }
             });
         });
