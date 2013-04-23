@@ -2,10 +2,9 @@
     "source": "github",
     "owner": "gabipetrovay",
     "name": "dev_deployer",
-    "main": "main.js",
     "dependencies": [
         "/main.js",
-        "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js",
+        "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"
     ],
     "operations": [
         { "file": "operations.js", "function": "upload" },
